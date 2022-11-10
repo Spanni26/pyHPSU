@@ -842,8 +842,8 @@
 			"id" : "190", 
 			"divisor" : "10", 
 			"writable" : "false", 
-			"unit" : "lh",
-			"type" : "longint"
+			"unit" : "",
+			"type" : "float"
 		},
 		"t_flow_ch_adj" : { 
 			"name" : "t_flow_ch_adj", 
