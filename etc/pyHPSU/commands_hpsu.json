@@ -104,6 +104,19 @@
 				"on" : "off"
 			}
 		},
+		"status_comp" : {
+                        "name" : "status_comp",
+                        "command" : "A1 00 61 00 00 00 00",
+                        "id" : "190",
+                        "divisor" : "1",
+                        "writable" : "false",
+                        "unit" : "longint",
+                        "type" : "value",
+                        "value_code" : {
+                                "off" : "0",
+                                "on" : "256"
+                        }
+                },
 		"runtime_comp" : { 
 			"name" : "runtime_comp", 
 			"command" : "31 00 FA 06 A5 00 00", 
