@@ -220,7 +220,7 @@ def main(argv):
     # Print help
     #
     if show_help:
-        n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=cmd, lg_code=lg_code)
+        n_hpsu = HPSU(driver=None, logger=logger, port=port, cmd=cmd, lg_code=lg_code)
         if len(cmd) == 0:
             print("List available commands:")
             print("%20s - %-10s" % ('COMMAND', 'LABEL'))
