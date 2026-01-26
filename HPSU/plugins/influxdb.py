@@ -50,7 +50,6 @@ class export():
 
 
     def pushValues(self, vars=None):
-        self.current_time = datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
         # create connection
         self.client = influxdb.InfluxDBClient(host=self.influxdbhost, port=self.influxdbport)
         # create database if it doesn't exist
@@ -71,28 +70,32 @@ class export():
         self.client.switch_database(self.influxdbname)
 
         for dict in vars:
-            if self.hpsu.all_commands[dict["name"]["unit"]] == "deg":
+            if self.hpsu.all_commands[dict["name"]]["unit"] == "deg":
                 measurement="temperature"
-            elif self.hpsu.all_commands[dict["name"]["unit"]] == "bar":
+            elif self.hpsu.all_commands[dict["name"]]["unit"] == "bar":
                 measurement="pressure"
-            elif self.hpsu.all_commands[dict["name"]["unit"]] == "lh": 
+            elif self.hpsu.all_commands[dict["name"]]["unit"] == "lh": 
                 measurement="flow" 
-            elif self.hpsu.all_commands[dict["name"]["unit"]] == "kwh":
+            elif self.hpsu.all_commands[dict["name"]]["unit"] == "kwh":
                 measurement="energy"
             else:
                 measurement="status"
+
+            try:
+                value = float(dict["resp"])
+            except (ValueError, TypeError):
+                value = dict["resp"]
             self.value_dict=[{
                 "measurement": measurement,
                 "tags":{
                 },
                 "fields": {
-                     dict["name"] : dict["resp"]
+                     dict["name"] : value
                     }
                 }
             ]
 
             if self.client.write_points(self.value_dict):
-                print(self.command_dict[dict["name"]])
                 self.hpsu.printd("Notification","Wrote " + str(dict["name"]) + " to influxdb")
             
 
