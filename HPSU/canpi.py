@@ -19,11 +19,13 @@ class CanPI(object):
     def __init__(self, hpsu=None):
         self.hpsu = hpsu
         try:
+            self.bus = can.interface.Bus(channel='can0', bustype='socketcan')
+        
+        except can.CanInterfaceNotImplementedError:
             self.bus = can.interface.Bus(channel='can0', bustype='socketcan_native')
         except Exception:
             self.hpsu.printd('exception', 'Error opening bus can0')
-            sys.exit(9)
-            
+            sys.exit(9) 
         config = configparser.ConfigParser()
         iniFile = '%s/%s.conf' % (self.hpsu.pathCOMMANDS, "pyhpsu")
         config.read(iniFile)
@@ -46,7 +48,24 @@ class CanPI(object):
             self.bus.shutdown()
         except Exception:
             self.hpsu.printd('exception', 'Error shutdown canbus')"""
-    
+        
+    def make_can_message(receiver, data):
+        try:
+            # Neue python-can Version
+            return can.Message(
+                arbitration_id=receiver,
+                data=data,
+                is_extended_id=False
+            )
+        except TypeError:
+            # Alte python-can Version
+            return can.Message(
+                arbitration_id=receiver,
+                data=data,
+                extended_id=False,
+                dlc=len(data)
+            )
+        
     def sendCommandWithID(self, cmd, setValue=None, priority=1):
         if setValue:
             receiver_id = 0x680
@@ -82,13 +101,14 @@ class CanPI(object):
         msg_data = [int(r, 16) for r in command.split(" ")]
         notTimeout = True
         i = 0
-        #print("sent: " + str(command))
+
         try:
-            msg = can.Message(arbitration_id=receiver_id, data=msg_data, extended_id=False, dlc=7)
+            #msg = can.Message(arbitration_id=receiver_id, data=msg_data, is_extended_id=False, dlc=7)
+            msg = self.make_can_message(receiver_id, msg_data)
             self.bus.send(msg)
 
-        except Exception:
-            self.hpsu.printd('exception', 'Error sending msg')
+        except Exception as e:
+            self.hpsu.printd('exception', f'Error sending msg: {e}')
 
         if setValue:
             return "OK"

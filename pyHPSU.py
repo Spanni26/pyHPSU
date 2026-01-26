@@ -261,7 +261,7 @@ def main(argv):
     elif restore_mode:
         restore_commands=[]
         try:
-            with open(backup_file, 'rU') as jsonfile:
+            with open(backup_file, 'r') as jsonfile:
                 restore_settings=json.load(jsonfile)
                 for command in restore_settings:
                     restore_commands.append(str(command["name"]) + ":" + str(command["resp"]))
