@@ -70,13 +70,13 @@ class export():
         self.client.switch_database(self.influxdbname)
 
         for dict in vars:
-            if self.hpsu.all_commands[dict["name"]]["unit"] == "deg":
+            if self.hpsu.command_dict[str(dict["name"])]["unit"] == "deg":
                 measurement="temperature"
-            elif self.hpsu.all_commands[dict["name"]]["unit"] == "bar":
+            elif self.hpsu.command_dict[str(dict["name"])]["unit"] == "bar":
                 measurement="pressure"
-            elif self.hpsu.all_commands[dict["name"]]["unit"] == "lh": 
+            elif self.hpsu.command_dict[str(dict["name"])]["unit"] == "lh": 
                 measurement="flow" 
-            elif self.hpsu.all_commands[dict["name"]]["unit"] == "kwh":
+            elif self.hpsu.command_dict[str(dict["name"])]["unit"] == "kwh":
                 measurement="energy"
             else:
                 measurement="status"
