@@ -97,7 +97,7 @@
 			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
-			"unit" : "longint",
+			"unit" : "",
 			"type" : "value",
 			"value_code" : {
 				"off" : "0",
@@ -119,7 +119,7 @@
 			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
-			"unit" : "longint",
+			"unit" : "hour",
 			"type" : "longint"
 		},
 		"posmix" : { 
@@ -281,7 +281,7 @@
 			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
-			"unit" : "longint",
+			"unit" : "",
 			"type" : "value",
 			"value_code" : {
 				"off" : "0",
@@ -295,8 +295,8 @@
 			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "false", 
-			"unit" : "longint",
-			"type" : "longint",
+			"unit" : "",
+			"type" : "value",
 			"value_code" : {
 				"standby" :"0",
 				"heating" : "1",
@@ -517,7 +517,7 @@
 			"id" : "190", 
 			"divisor" : "1", 
 			"writable" : "true", 
-			"unit" : "longint",
+			"unit" : "",
 			"type" : "value",
 			"value_code" : {
 				" " : "0",

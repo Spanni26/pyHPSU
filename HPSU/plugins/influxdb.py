@@ -71,9 +71,18 @@ class export():
         self.client.switch_database(self.influxdbname)
 
         for dict in vars:
-
+            if self.hpsu.all_commands[dict["name"]["unit"]] == "deg":
+                measurement="temperature"
+            elif self.hpsu.all_commands[dict["name"]["unit"]] == "bar":
+                measurement="pressure"
+            elif self.hpsu.all_commands[dict["name"]["unit"]] == "lh": 
+                measurement="flow" 
+            elif self.hpsu.all_commands[dict["name"]["unit"]] == "kwh":
+                measurement="energy"
+            else:
+                measurement="status"
             self.value_dict=[{
-                "measurement": "pyHPSU",
+                "measurement": measurement,
                 "tags":{
                 },
                 "fields": {
@@ -82,7 +91,9 @@ class export():
                 }
             ]
 
-            self.client.write_points(self.value_dict)
+            if self.client.write_points(self.value_dict):
+                print(self.command_dict[dict["name"]])
+                self.hpsu.printd("Notification","Wrote " + str(dict["name"]) + " to influxdb")
             
 
 
