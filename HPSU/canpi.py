@@ -49,7 +49,7 @@ class CanPI(object):
         except Exception:
             self.hpsu.printd('exception', 'Error shutdown canbus')"""
         
-    def make_can_message(receiver, data):
+    def make_can_message(self, receiver, data):
         try:
             # Neue python-can Version
             return can.Message(
