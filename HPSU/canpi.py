@@ -108,7 +108,7 @@ class CanPI(object):
             self.bus.send(msg)
 
         except Exception as e:
-            self.hpsu.printd('exception', f'Error sending msg: {e}')
+            self.hpsu.printd('exception', f"CanPI {cmd['name']}, Error sending msg: {e}")
 
         if setValue:
             return "OK"
@@ -121,7 +121,7 @@ class CanPI(object):
                 rcBUS = self.bus.recv(timeout)
                 
             except Exception:
-                self.hpsu.printd('exception', 'Error recv')
+                self.hpsu.printd('exception', "CanPI %s, Error recv" % cmd['name'])
 
             if rcBUS:
                 if (msg_data[2] == 0xfa and msg_data[3] == rcBUS.data[3] and msg_data[4] == rcBUS.data[4]) or (msg_data[2] != 0xfa and msg_data[2] == rcBUS.data[2]):
@@ -129,15 +129,15 @@ class CanPI(object):
                     notTimeout = False
                     #print("got:  " + str(rc))
                 else:
-                    self.hpsu.printd('error', 'SEND:%s' % (str(msg_data)))
-                    self.hpsu.printd('error', 'RECV:%s' % (str(rcBUS.data)))
+                    self.hpsu.printd('error', 'CanPI %s, SEND:%s' % (cmd['name'], str(msg_data)))
+                    self.hpsu.printd('error', 'CanPI %s, RECV:%s' % (cmd['name'], str(rcBUS.data)))
             else:
-                self.hpsu.printd('error', 'Not aquired bus')
+                self.hpsu.printd('error', 'CanPI %s, Not aquired bus' % cmd['name'])
 
             if notTimeout:
-                self.hpsu.printd('warning', 'msg not sync, retry: %s' % i)
+                self.hpsu.printd('warning', 'CanPI %s, msg not sync, retry: %s' % (cmd['name'], i))
                 if i >= self.retry:
-                    self.hpsu.printd('error', 'msg not sync, timeout')
+                    self.hpsu.printd('error', 'CanPI %s, msg not sync, timeout' % cmd['name'])
                     notTimeout = False
                     rc = "KO"
         
