@@ -252,12 +252,12 @@ def main(argv):
                         collected_cmds.append(str(job))
             if len(collected_cmds):
                 n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=collected_cmds, lg_code=lg_code)
-                exec('thread_%s = threading.Thread(target=read_can, args=(driver,logger,port,collected_cmds,lg_code,verbose,output_type))' % (period))
+                exec('thread_%s = threading.Thread(target=read_can, args=(n_hpsu,driver,logger,port,collected_cmds,lg_code,verbose,output_type))' % (period))
                 exec('thread_%s.start()' % (period))
             time.sleep(1)
     elif backup_mode:
         n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=cmd, lg_code=lg_code)
-        read_can(driver, logger, port, n_hpsu.backup_commands, lg_code,verbose,output_type)
+        read_can(n_hpsu, driver, logger, port, n_hpsu.backup_commands, lg_code,verbose,output_type)
     elif restore_mode:
         restore_commands=[]
         try:
@@ -266,16 +266,16 @@ def main(argv):
                 for command in restore_settings:
                     restore_commands.append(str(command["name"]) + ":" + str(command["resp"]))
                 n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=restore_commands, lg_code=lg_code)
-                read_can(driver, logger, port, restore_commands, lg_code,verbose,output_type)
+                read_can(n_hpsu, driver, logger, port, restore_commands, lg_code,verbose,output_type)
         except FileNotFoundError:
             print("No such file or directory!!!")
             sys.exit(1)
 
     else:
         n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=cmd, lg_code=lg_code)
-        read_can(driver, logger, port, cmd, lg_code,verbose,output_type)
+        read_can(n_hpsu, driver, logger, port, cmd, lg_code,verbose,output_type)
 
-def read_can(driver,logger,port,cmd,lg_code,verbose,output_type):
+def read_can(n_hpsu,driver,logger,port,cmd,lg_code,verbose,output_type):
     global backup_file
     # really needed? Driver is checked above
     #if not driver:
