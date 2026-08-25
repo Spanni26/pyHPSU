@@ -132,7 +132,7 @@ class CanPI(object):
                     self.hpsu.printd('error', 'CanPI %s, SEND:%s' % (cmd['name'], str(msg_data)))
                     self.hpsu.printd('error', 'CanPI %s, RECV:%s' % (cmd['name'], str(rcBUS.data)))
             else:
-                self.hpsu.printd('error', 'CanPI %s, Not aquired bus' % cmd['name'])
+                self.hpsu.printd('error', 'CanPI %s, Not acquired bus' % cmd['name'])
 
             if notTimeout:
                 self.hpsu.printd('warning', 'CanPI %s, msg not sync, retry: %s' % (cmd['name'], i))
