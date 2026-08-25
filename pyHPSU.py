@@ -72,7 +72,7 @@ def main(argv):
     except getopt.GetoptError:
         print('pyHPSU.py -d DRIVER -c COMMAND')
         print(' ')
-        print('           -a  --auto            do atomatic queries')
+        print('           -a  --auto            do automatic queries')
         print('           -f  --config          Configfile, overrides given commandline arguments')
         print('           -d  --driver          driver name: [ELM327, PYCAN, EMU, HPSUD], Default: PYCAN')
         print('           -p  --port            port (eg COM or /dev/tty*, only for ELM327 driver)')
