@@ -3,10 +3,7 @@
 # v 0.0.3 by Vanni Brutto (Zanac)
 
 import sys
-import getopt
-import time
 import configparser
-import logging
 try:
     import can
 except Exception:
@@ -51,14 +48,14 @@ class CanPI(object):
         
     def make_can_message(self, receiver, data):
         try:
-            # Neue python-can Version
+            # New python-can version
             return can.Message(
                 arbitration_id=receiver,
                 data=data,
                 is_extended_id=False
             )
         except TypeError:
-            # Alte python-can Version
+            # Old python-can version
             return can.Message(
                 arbitration_id=receiver,
                 data=data,

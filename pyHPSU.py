@@ -48,7 +48,6 @@ def main(argv):
     global config
     config = configparser.ConfigParser()
     global n_hpsu
-    env_encoding=sys.stdout.encoding
     PLUGIN_PATH="/usr/lib/python3/dist-packages/HPSU/plugins"
     backup_mode=False
     global backup_file
