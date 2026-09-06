@@ -48,7 +48,6 @@ def main(argv):
     global config
     config = configparser.ConfigParser()
     global n_hpsu
-    env_encoding=sys.stdout.encoding
     PLUGIN_PATH="/usr/lib/python3/dist-packages/HPSU/plugins"
     backup_mode=False
     global backup_file
@@ -72,7 +71,7 @@ def main(argv):
     except getopt.GetoptError:
         print('pyHPSU.py -d DRIVER -c COMMAND')
         print(' ')
-        print('           -a  --auto            do atomatic queries')
+        print('           -a  --auto            do automatic queries')
         print('           -f  --config          Configfile, overrides given commandline arguments')
         print('           -d  --driver          driver name: [ELM327, PYCAN, EMU, HPSUD], Default: PYCAN')
         print('           -p  --port            port (eg COM or /dev/tty*, only for ELM327 driver)')
@@ -252,12 +251,12 @@ def main(argv):
                         collected_cmds.append(str(job))
             if len(collected_cmds):
                 n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=collected_cmds, lg_code=lg_code)
-                exec('thread_%s = threading.Thread(target=read_can, args=(driver,logger,port,collected_cmds,lg_code,verbose,output_type))' % (period))
+                exec('thread_%s = threading.Thread(target=read_can, args=(n_hpsu,driver,logger,port,collected_cmds,lg_code,verbose,output_type))' % (period))
                 exec('thread_%s.start()' % (period))
             time.sleep(1)
     elif backup_mode:
         n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=cmd, lg_code=lg_code)
-        read_can(driver, logger, port, n_hpsu.backup_commands, lg_code,verbose,output_type)
+        read_can(n_hpsu, driver, logger, port, n_hpsu.backup_commands, lg_code,verbose,output_type)
     elif restore_mode:
         restore_commands=[]
         try:
@@ -266,16 +265,16 @@ def main(argv):
                 for command in restore_settings:
                     restore_commands.append(str(command["name"]) + ":" + str(command["resp"]))
                 n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=restore_commands, lg_code=lg_code)
-                read_can(driver, logger, port, restore_commands, lg_code,verbose,output_type)
+                read_can(n_hpsu, driver, logger, port, restore_commands, lg_code,verbose,output_type)
         except FileNotFoundError:
             print("No such file or directory!!!")
             sys.exit(1)
 
     else:
         n_hpsu = HPSU(driver=driver, logger=logger, port=port, cmd=cmd, lg_code=lg_code)
-        read_can(driver, logger, port, cmd, lg_code,verbose,output_type)
+        read_can(n_hpsu, driver, logger, port, cmd, lg_code,verbose,output_type)
 
-def read_can(driver,logger,port,cmd,lg_code,verbose,output_type):
+def read_can(n_hpsu,driver,logger,port,cmd,lg_code,verbose,output_type):
     global backup_file
     # really needed? Driver is checked above
     #if not driver:
@@ -301,7 +300,7 @@ def read_can(driver,logger,port,cmd,lg_code,verbose,output_type):
                 rc = n_hpsu.sendCommand(c, setValue)
                 if rc != "KO":
                     i = 4
-                    if not setValue:
+                    if setValue is None:
                         response = n_hpsu.parseCommand(cmd=c, response=rc, verbose=verbose)
                         resp = n_hpsu.umConversion(cmd=c, response=response, verbose=verbose)
 

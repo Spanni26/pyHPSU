@@ -12,12 +12,38 @@
 # PREFIX = rotex
 
 import configparser
-import requests
 import sys
 import os
-import paho.mqtt.publish as publish
 import paho.mqtt.client as mqtt
 
+
+def make_client(client_id):
+    try:
+        return mqtt.Client(callback_api_version=mqtt.CallbackAPIVersion.VERSION2, client_id=client_id)
+    except (AttributeError, TypeError, ValueError):
+        return mqtt.Client(client_id)
+
+
+_client_lock = threading.Lock()
+_client = None
+
+
+def _shared_client(clientname, brokerhost, brokerport, username, password):
+    # export() is instantiated fresh per job cycle, so a per-instance
+    # connection would reconnect every time (previously even once per
+    # value within pushValues()); reuse one process-wide connection.
+    global _client
+    with _client_lock:
+        if _client is None:
+            client = make_client(clientname)
+            if username:
+                client.username_pw_set(username, password=password)
+            client.enable_logger()
+            client.reconnect_delay_set(min_delay=1, max_delay=30)
+            client.connect_async(brokerhost, port=brokerport)
+            client.loop_start()
+            _client = client
+        return _client
 
 
 class export():
@@ -75,11 +101,7 @@ class export():
         else:
             self.qos = "0"
 
-        self.client=mqtt.Client(self.clientname)
-        #self.client.on_publish = self.on_publish()
-        if self.username:
-           self.client.username_pw_set(self.username, password=self.password)
-        self.client.enable_logger()
+        self.client = _shared_client(self.clientname, self.brokerhost, self.brokerport, self.username, self.password)
 
     
         
@@ -89,19 +111,12 @@ class export():
 
 
     def pushValues(self, vars=None):
-        
-        #self.msgs=[]
         for r in vars:
-            self.client.connect(self.brokerhost, port=self.brokerport)
-            msgs=[]
             if self.prefix:
-                ret=self.client.publish(self.prefix + "/" + r['name'],payload=r['resp'], qos=int(self.qos))
-                topic=self.prefix + "/" + r['name']
+                topic = self.prefix + "/" + r['name']
             else:
-                ret=self.client.publish(r['name'],payload=r['resp'], qos=int(self.qos))
-                topic=r['name']
-            msg={'topic':topic,'payload':r['resp'], 'qos':self.qos, 'retain':False}
-            self.client.disconnect()
+                topic = r['name']
+            self.client.publish(topic, payload=r['resp'], qos=int(self.qos))
 
        
 
