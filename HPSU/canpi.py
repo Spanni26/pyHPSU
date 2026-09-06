@@ -38,8 +38,7 @@ class CanPI(object):
             return default
 
     def __del__(self):
-        pass
-        """try:
+        try:
             self.bus.shutdown()
         except Exception:
             self.hpsu.printd('exception', 'Error shutdown canbus')"""
