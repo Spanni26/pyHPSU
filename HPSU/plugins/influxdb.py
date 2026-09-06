@@ -47,11 +47,26 @@ class export():
         else:
             self.influxdbname = "pyHPSU"
 
+        # influxdb username
+        if self.config.has_option('INFLUXDB', 'USERNAME'):
+            self.influxdbusername = self.config['INFLUXDB']['USERNAME']
+        else:
+            self.influxdbusername = None
 
+        # influxdb password
+        if self.config.has_option('INFLUXDB', 'PASSWORD'):
+            self.influxdbpassword = self.config['INFLUXDB']['PASSWORD']
+        else:
+            self.influxdbpassword = None
 
     def pushValues(self, vars=None):
         # create connection
-        self.client = influxdb.InfluxDBClient(host=self.influxdbhost, port=self.influxdbport)
+        self.client = influxdb.InfluxDBClient(
+            host=self.influxdbhost,
+            port=self.influxdbport,
+            username=self.influxdbusername,
+            password=self.influxdbpassword
+        )
         # create database if it doesn't exist
         try:
             self.databases=self.client.get_list_database()
@@ -62,9 +77,10 @@ class export():
             if not(db_found):
                 self.client.create_database(self.influxdbname)
                
-        except:
+        except Exception as e:
             rc = "ko"
-            self.hpsu.printd("exception", "Error : Cannot connect to database")
+            self.hpsu.printd("exception", "Error : Cannot connect to database: " + str(e))
+            return
 
 
         self.client.switch_database(self.influxdbname)
