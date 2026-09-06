@@ -48,7 +48,6 @@ def main(argv):
     global config
     config = configparser.ConfigParser()
     global n_hpsu
-    env_encoding=sys.stdout.encoding
     PLUGIN_PATH="/usr/lib/python3/dist-packages/HPSU/plugins"
     backup_mode=False
     global backup_file
@@ -301,7 +300,7 @@ def read_can(driver,logger,port,cmd,lg_code,verbose,output_type):
                 rc = n_hpsu.sendCommand(c, setValue)
                 if rc != "KO":
                     i = 4
-                    if not setValue:
+                    if setValue is None:
                         response = n_hpsu.parseCommand(cmd=c, response=rc, verbose=verbose)
                         resp = n_hpsu.umConversion(cmd=c, response=response, verbose=verbose)
 
