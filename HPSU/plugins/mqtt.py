@@ -12,11 +12,8 @@
 # PREFIX = rotex
 
 import configparser
-import requests
 import sys
 import os
-import threading
-import paho.mqtt.publish as publish
 import paho.mqtt.client as mqtt
 
 
